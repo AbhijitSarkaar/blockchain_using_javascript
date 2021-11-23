@@ -1,10 +1,13 @@
+const sha256 = require('sha256')
+
 function Blockchain() {
     this.chain = []
     this.pendingTransactions = []
 }
 
 //nonce is a proof of work, used to show that the block was created in a legitimate way
-//hash is the data present in the block
+//hash is the hashed version of the data present in the block. 
+//the data present in the block is equal to all the transactions present in the block
 //every time a new block is created, pending transactions are inserted into the newly created block
 //a block is called a ledger, contains a set of transactions
 
@@ -47,5 +50,13 @@ Blockchain.prototype.createNewTransaction = function(amount, sender, recipient) 
     this.pendingTransactions.push(newTransaction)
     return this.getLastBlock()['index'] + 1
 }   
+
+//hashed value is generated using sha256 algorithm. it takes a string as a input
+
+Blockchain.prototype.hashBlock = function(previousBlockHash, currentBlockData, nonce) {
+    const dataAsString = previousBlockHash + nonce.toString() + JSON.stringify(currentBlockData)
+    const hash = sha256(dataAsString)
+    return hash
+}
 
 module.exports = Blockchain
